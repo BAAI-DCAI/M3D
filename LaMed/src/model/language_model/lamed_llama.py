@@ -193,6 +193,7 @@ class LamedLlamaForCausalLM(LamedMetaForCausalLM, LlamaForCausalLM):
             last_hidden_state = torch.cat(last_tensors[1:], dim=1)
 
             seg_prompts = []
+            noseg_ids = []
             for i in range(len(seg_token_mask)):
                 if torch.sum(seg_token_mask[i]) == 1:
                     seg_token = last_hidden_state[i][seg_token_mask[i]]
@@ -202,12 +203,14 @@ class LamedLlamaForCausalLM(LamedMetaForCausalLM, LlamaForCausalLM):
                     seg_token = torch.mean(seg_tokens, dim=0, keepdim=True)
                     seg_prompt = self.get_model().seg_projector(seg_token)
                 else:
+                    noseg_ids.append(i)
                     seg_prompt = torch.zeros([1, self.config.mm_hidden_size], dtype=last_hidden_state.dtype,
                                              device=last_hidden_state.device)
                 seg_prompts.append(seg_prompt)
 
             seg_prompts = torch.cat(seg_prompts, dim=0)
             logits = self.get_model().seg_module(images, seg_prompts)
+            logits[noseg_ids] = -torch.inf
 
             return output_ids, logits
         else:

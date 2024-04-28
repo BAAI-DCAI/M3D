@@ -1,5 +1,3 @@
-import jieba
-from fuzzywuzzy import fuzz
 from collections import Counter
 from rouge import Rouge
 import re
@@ -186,15 +184,6 @@ def retrieval_zh_score(prediction, ground_truth, **kwargs):
     return float(final_score)
 
 
-def code_sim_score(prediction, ground_truth, **kwargs):
-    all_lines = prediction.lstrip('\n').split('\n')
-    prediction = ""
-    for line in all_lines:
-        if ('`' not in line) and ('#' not in line) and ('//' not in line):
-            prediction = line
-            break
-    return (fuzz.ratio(prediction, ground_truth) / 100)
-
 
 def classification_score(prediction, ground_truth, **kwargs):
     em_match_list = []
@@ -220,14 +209,6 @@ def rouge_score(prediction, ground_truth, **kwargs):
         return 0.0
     return scores["rouge-l"]["f"]
 
-
-def rouge_zh_score(prediction, ground_truth, **kwargs):
-    prediction = " ".join(list(jieba.cut(prediction, cut_all=False)))
-    ground_truth = " ".join(list(jieba.cut(ground_truth, cut_all=False)))
-    score = rouge_score(prediction, ground_truth)
-    return score
-
-
 def f1_score(prediction, ground_truth, **kwargs):
     common = Counter(prediction) & Counter(ground_truth)
     num_same = sum(common.values())
@@ -245,16 +226,6 @@ def qa_f1_score(prediction, ground_truth, **kwargs):
 
     prediction_tokens = normalized_prediction.split()
     ground_truth_tokens = normalized_ground_truth.split()
-    return f1_score(prediction_tokens, ground_truth_tokens)
-
-
-def qa_f1_zh_score(prediction, ground_truth, **kwargs):
-    prediction_tokens = list(jieba.cut(prediction, cut_all=False))
-    ground_truth_tokens = list(jieba.cut(ground_truth, cut_all=False))
-    prediction_tokens = [normalize_zh_answer(token) for token in prediction_tokens]
-    ground_truth_tokens = [normalize_zh_answer(token) for token in ground_truth_tokens]
-    prediction_tokens = [token for token in prediction_tokens if len(token) > 0]
-    ground_truth_tokens = [token for token in ground_truth_tokens if len(token) > 0]
     return f1_score(prediction_tokens, ground_truth_tokens)
 
 

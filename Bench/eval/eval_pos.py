@@ -33,12 +33,13 @@ def seed_everything(seed):
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name_or_path', type=str, default="", choices=[])
+    parser.add_argument('--model_name_or_path', type=str, default="GoodBaiBai88/M3D-LaMed-Llama-2-7B", choices=[])
     parser.add_argument('--max_length', type=int, default=512)
     parser.add_argument('--max_new_tokens', type=int, default=256)
-    parser.add_argument('--num_beams', type=int, default=1)
     parser.add_argument('--do_sample', type=bool, default=False)
+    parser.add_argument('--top_p', type=float, default=None)
     parser.add_argument('--temperature', type=float, default=1.0)
+    parser.add_argument('--device', type=str, default="cuda", choices=["cuda", "cpu"])
 
     # data
     parser.add_argument('--data_root', type=str, default="./Data/data")
@@ -63,10 +64,21 @@ def postprocess_text(preds, labels):
 def main():
     seed_everything(42)
     args = parse_args()
+    device = torch.device(args.device)
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, model_max_length=args.max_length,
-                                                   padding_side="right", use_fast=False)
-    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.model_name_or_path,
+        model_max_length=args.max_length,
+        padding_side="right",
+        use_fast=False,
+        trust_remote_code=True
+    )
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_name_or_path,
+        device_map='auto',
+        trust_remote_code=True
+    )
+    model = model.to(device=device)
 
     if args.rec:
         test_dataset = PosRECTestDataset(args, tokenizer, mode='test')
@@ -82,11 +94,6 @@ def main():
             drop_last=False,
     )
 
-    # device = 'cuda' #'cpu', 'cuda'
-    device = torch.device('cuda')
-    model = model.to(device)
-    model.eval()
-
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
@@ -100,10 +107,13 @@ def main():
                 question_type = sample["question_type"]
                 answer = sample['answer']
 
-                image = sample["image"].to(device)
-                input_id = tokenizer(question, return_tensors="pt")['input_ids'].to(device)
+                image = sample["image"].to(device=device)
+                input_id = tokenizer(question, return_tensors="pt")['input_ids'].to(device=device)
 
-                generation = model.generate(image, input_id, max_new_tokens=args.max_new_tokens, num_beams=args.num_beams, do_sample=args.do_sample, temperature=args.temperature)
+                with torch.inference_mode():
+                    generation = model.generate(image, input_id, max_new_tokens=args.max_new_tokens,
+                                                do_sample=args.do_sample, top_p=args.top_p,
+                                                temperature=args.temperature)
                 generated_texts = tokenizer.batch_decode(generation, skip_special_tokens=True)
 
                 question_box = extract_box_from_text(question[0])
@@ -167,12 +177,13 @@ def main():
                 question = sample["question"]
                 answer = sample['answer']
 
-                image = sample["image"].to(device)
-                input_id = tokenizer(question, return_tensors="pt")['input_ids'].to(device)
+                image = sample["image"].to(device=device)
+                input_id = tokenizer(question, return_tensors="pt")['input_ids'].to(device=device)
 
-                generation = model.generate(image, input_id, max_new_tokens=args.max_new_tokens,
-                                            num_beams=args.num_beams, do_sample=args.do_sample,
-                                            temperature=args.temperature)
+                with torch.inference_mode():
+                    generation = model.generate(image, input_id, max_new_tokens=args.max_new_tokens,
+                                                do_sample=args.do_sample, top_p=args.top_p,
+                                                temperature=args.temperature)
                 generated_texts = tokenizer.batch_decode(generation, skip_special_tokens=True)
 
                 result = dict()

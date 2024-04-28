@@ -30,12 +30,13 @@ def seed_everything(seed):
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name_or_path', type=str, default="", choices=[])
+    parser.add_argument('--model_name_or_path', type=str, default="GoodBaiBai88/M3D-LaMed-Llama-2-7B", choices=[])
     parser.add_argument('--max_length', type=int, default=512)
     parser.add_argument('--max_new_tokens', type=int, default=256)
-    parser.add_argument('--num_beams', type=int, default=1)
     parser.add_argument('--do_sample', type=bool, default=False)
+    parser.add_argument('--top_p', type=float, default=None)
     parser.add_argument('--temperature', type=float, default=1.0)
+    parser.add_argument('--device', type=str, default="cuda", choices=["cuda", "cpu"])
 
     # data
     parser.add_argument('--data_root', type=str, default="./Data/data")
@@ -55,9 +56,21 @@ def postprocess_text(preds, labels):
 def main():
     seed_everything(42)
     args = parse_args()
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, model_max_length=args.max_length,
-                                                   padding_side="right", use_fast=False)
-    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path)
+    device = torch.device(args.device)
+
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.model_name_or_path,
+        model_max_length=args.max_length,
+        padding_side="right",
+        use_fast=False,
+        trust_remote_code=True
+    )
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_name_or_path,
+        device_map='auto',
+        trust_remote_code=True
+    )
+    model = model.to(device=device)
 
     test_dataset = CapDataset(args, tokenizer=tokenizer, mode='test') # test1k
 
@@ -70,11 +83,6 @@ def main():
             drop_last=False,
     )  
 
-    # device = 'cuda' #'cpu', 'cuda'
-    device = torch.device('cuda')
-    model = model.to(device)
-    model.eval()
-
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     output_path = os.path.join(args.output_dir, "eval_caption.csv")
@@ -82,33 +90,31 @@ def main():
     with open(output_path, mode='w') as outfile:
         writer = csv.writer(outfile)
         writer.writerow(["Question", "Ground Truth", "pred", "bleu", "rouge1", "meteor", "bert_f1"])
-        with torch.no_grad():
-            for sample in tqdm(test_dataloader):
-                question = sample["question"]
-                answer = sample['answer']
+        for sample in tqdm(test_dataloader):
+            question = sample["question"]
+            answer = sample['answer']
 
-                input_id = tokenizer(question, return_tensors="pt")['input_ids'].to(device)
-                image = sample["image"].to(device)
+            input_id = tokenizer(question, return_tensors="pt")['input_ids'].to(device=device)
+            image = sample["image"].to(device=device)
 
-                model.model.seg_enable = False
-                generation = model.generate(image, input_id, max_new_tokens=args.max_new_tokens, num_beams=args.num_beams, do_sample=args.do_sample, temperature=args.temperature)
-                generated_texts = tokenizer.batch_decode(generation, skip_special_tokens=True)
+            generation = model.generate(image, input_id, max_new_tokens=args.max_new_tokens, do_sample=args.do_sample, top_p=args.top_p, temperature=args.temperature)
+            generated_texts = tokenizer.batch_decode(generation, skip_special_tokens=True)
 
-                result = dict()
-                decoded_preds, decoded_labels = postprocess_text(generated_texts, answer)
-                bleu_score = bleu.compute(predictions=decoded_preds, references=decoded_labels, max_order=1)
-                result["bleu"] = bleu_score['bleu']
+            result = dict()
+            decoded_preds, decoded_labels = postprocess_text(generated_texts, answer)
+            bleu_score = bleu.compute(predictions=decoded_preds, references=decoded_labels, max_order=1)
+            result["bleu"] = bleu_score['bleu']
 
-                rouge_score = rouge.compute(predictions=decoded_preds, references=decoded_labels, rouge_types=['rouge1'])
-                result["rouge1"] = rouge_score['rouge1']
+            rouge_score = rouge.compute(predictions=decoded_preds, references=decoded_labels, rouge_types=['rouge1'])
+            result["rouge1"] = rouge_score['rouge1']
 
-                meteor_score = meteor.compute(predictions=decoded_preds, references=decoded_labels)
-                result["meteor"] = meteor_score['meteor']
+            meteor_score = meteor.compute(predictions=decoded_preds, references=decoded_labels)
+            result["meteor"] = meteor_score['meteor']
 
-                bert_score = bertscore.compute(predictions=decoded_preds, references=decoded_labels, lang="en")
-                result["bert_f1"] = sum(bert_score['f1']) / len(bert_score['f1'])
+            bert_score = bertscore.compute(predictions=decoded_preds, references=decoded_labels, lang="en")
+            result["bert_f1"] = sum(bert_score['f1']) / len(bert_score['f1'])
 
-                writer.writerow([question[0], answer[0], generated_texts[0], result["bleu"], result["rouge1"], result["meteor"], result["bert_f1"]])
+            writer.writerow([question[0], answer[0], generated_texts[0], result["bleu"], result["rouge1"], result["meteor"], result["bert_f1"]])
 
 
 if __name__ == "__main__":

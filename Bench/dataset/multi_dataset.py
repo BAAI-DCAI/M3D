@@ -240,9 +240,6 @@ class CapDataset(Dataset):
                     'answer': answer,
                     'question_type': "Caption",
                 }
-                if self.args.seg_enable:
-                    ret.update({'seg': torch.zeros_like(image)})
-
                 return ret
 
             except Exception as e:
@@ -352,10 +349,6 @@ class VQADataset(Dataset):
                     'answer_choice': data["Answer Choice"],
                     'question_type': data["Question Type"],
                 }
-
-                if self.args.seg_enable:
-                    ret.update({'seg': torch.zeros_like(image)})
-
                 return ret
 
             except Exception as e:
@@ -592,9 +585,6 @@ class PosRECDataset(Dataset):
                     'tag': self.tag,
                 }
 
-                if self.args.seg_enable:
-                    ret.update({'seg': torch.zeros_like(image)})
-
                 return ret
 
             except Exception as e:
@@ -811,10 +801,6 @@ class PosREGDataset(Dataset):
                     'question_type': "REG",
                     'tag': self.tag,
                 }
-
-                if self.args.seg_enable:
-                    ret.update({'seg': torch.zeros_like(image)})
-
                 return ret
 
             except Exception as e:

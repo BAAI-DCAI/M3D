@@ -21,8 +21,9 @@ def seed_everything(seed):
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name_or_path', type=str, default="", choices=[])
+    parser.add_argument('--model_name_or_path', type=str, default="GoodBaiBai88/M3D-CLIP", choices=[])
     parser.add_argument('--max_length', type=int, default=512)
+    parser.add_argument('--device', type=str, default="cuda", choices=["cuda", "cpu"])
 
     # data
     parser.add_argument('--data_root', type=str, default="./Data/data/")
@@ -45,11 +46,21 @@ def calculate_recall(similarity_matrix, k):
 def main():
     seed_everything(42)
     args = parse_args()
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path, model_max_length=args.max_length,
-                                                   padding_side="right", use_fast=False)
-    model = AutoModel.from_pretrained(args.model_name_or_path)
+    device = torch.device(args.device)
 
-    test_dataset = ITRDataset(args, tokenizer=tokenizer, mode='test100')
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.model_name_or_path,
+        model_max_length=args.max_length,
+        padding_side="right",
+        use_fast=False
+    )
+    model = AutoModel.from_pretrained(
+        args.model_name_or_path,
+        trust_remote_code=True
+    )
+    model = model.to(device=device)
+
+    test_dataset = ITRDataset(args, tokenizer=tokenizer, mode='test') # test, test1k, test500, test100
 
     test_dataloader = DataLoader(
             test_dataset,
@@ -60,25 +71,20 @@ def main():
             drop_last=False,
     )  
 
-    # device = 'cuda' #'cpu', 'cuda'
-    device = torch.device('cuda')
-    model = model.to(device)
-    model.eval()
-
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
 
     txt_feats_all = []
     img_feats_all = []
-    with torch.no_grad():
-        for sample in tqdm(test_dataloader):
-            input_id = sample["input_id"].to(device)
-            attention_mask = sample["attention_mask"].to(device)
-            image = sample["image"].to(device)
+    for sample in tqdm(test_dataloader):
+        input_id = sample["input_id"].to(device=device)
+        attention_mask = sample["attention_mask"].to(device=device)
+        image = sample["image"].to(device=device)
+        with torch.inference_mode():
             image_features = model.encode_image(image)[:, 0]
             text_features = model.encode_text(input_id, attention_mask)[:, 0]
-            txt_feats_all.append(text_features.detach().cpu())
-            img_feats_all.append(image_features.detach().cpu())
+        txt_feats_all.append(text_features.detach().cpu())
+        img_feats_all.append(image_features.detach().cpu())
 
     txt_feats_all = torch.cat(txt_feats_all, dim=0)
     img_feats_all = torch.cat(img_feats_all, dim=0)
