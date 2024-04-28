@@ -1,6 +1,6 @@
 # M3D: Advancing 3D Medical Image Analysis with Multi-Modal Large Language Models
 
-<font size=3><div align='center' > <a href=https://arxiv.org/abs/2404.00578>**Paper**</a> | [**Data**](#data) | [**Model**](#model) | [**Training**](#training) | [**Inference**](#inference) | [**Benchmark**](#benchmark) | [**Online Demo**]()</div></font>
+<font size=3><div align='center' > <a href=https://arxiv.org/abs/2404.00578>**Paper**</a> | [**Data**](#data) | [**Model**](#model) | [**Training**](#training) | [**Benchmark**](#benchmark) | [**Online Demo**]()</div></font>
 M3D is the pioneering and comprehensive series of work on the  multi-modal large language model for 3D medical analysis, including:
 - **M3D-Data**: the largest-scale open-source 3D medical dataset, consists of 120K image-text pairs and 662K instruction-response pairs;
 - **M3D-LaMed**: the versatile multi-modal models with M3D-CLIP pretrained vision encoder, which are capable of tasks such as image-text retrieval, report generation, visual question answering, positioning and segmentation;
@@ -8,7 +8,7 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 
 
 ## News
-- [x] [2024.04.28] We have released the data, code and model, and we will improve the README as soon as possible.
+- [x] [2024.04.28] We have released the data, code and model.
 
 
 ## Quickstart
