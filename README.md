@@ -7,34 +7,34 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 - **M3D-Bench**: the most comprehensive automatic evaluation benchmark covers 8 tasks.
 
 
-### News
+## News
 - [x] [2024.04.28] We have released the data, code and model, and we will improve the README as soon as possible.
 
 
-### Quickstart
+## Quickstart
 
 
-### Installation
+## Installation
 
-### Data Preparation
+## Data Preparation
 
+## Training
+### Pretrained Weights
 ### Training
-#### Pretrained Weights
-#### Training
-#### Merge LoRA Weight
+### Merge LoRA Weight
 
-### Benchmark
-#### Evaluation
+## Benchmark
+### Evaluation
 
 
-### Model
+## Model
 | Model    | Download Link                                                                                                                                 |
 |----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | M3D-CLIP | [HuggingFace](https://huggingface.co/GoodBaiBai88/M3D-CLIP), [ModelScope]()    |
 | M3D-LaMed-Llama-2-7B  | [HuggingFace](https://huggingface.co/GoodBaiBai88/M3D-LaMed-Llama-2-7B), [ModelScope]()|
 
 
-### M3D-Data
+## M3D-Data
 | Dataset  | Type | Images | Texts | Download Link |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | M3D-Cap | 3D image-text pairs |	120,092 | 42,496 | [HuggingFace](https://huggingface.co/datasets/GoodBaiBai88/M3D-Cap), [ModelScope](https://www.modelscope.cn/datasets/GoodBaiBai88/M3D-Cap) |
@@ -42,7 +42,7 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 | M3D-Seg | 3D images, category text, and segmentation masks | 5,772 | 149,196 | [HuggingFace](https://huggingface.co/datasets/GoodBaiBai88/M3D-Seg), [ModelScope](https://www.modelscope.cn/datasets/GoodBaiBai88/M3D-Seg) |
 | M3D-RefSeg | 3D images, questions, answers, and segmentation masks |	210 | 2,778 | [HuggingFace](https://huggingface.co/datasets/GoodBaiBai88/M3D-RefSeg), [ModelScope](https://www.modelscope.cn/datasets/GoodBaiBai88/M3D-RefSeg) |
 
-### Citation
+## Citation
 
 If our dataset or project are helpful to you, please consider citing:
 
@@ -64,4 +64,4 @@ If our dataset or project are helpful to you, please consider citing:
 }
 ```
 
-### Acknowledgement
+## Acknowledgement
