@@ -106,7 +106,7 @@ We recommend saving the downloaded and processed dataset to `Data/data/`.
 ### Pretrained Weights
 To train M3D-LaMed, you need to prepare some pretrained weights for better performance and faster convergence.
 
-#### Vison encoder
+#### Vision encoder
 We recommend downloading the medical 3D ViT weight `pretrained_ViT.bin` from [M3D-CLIP](https://huggingface.co/GoodBaiBai88/M3D-CLIP/tree/main) directly.
 Or you can also pretrain the 3D ViT by yourself by
 ```bash
