@@ -92,4 +92,6 @@ dataset_info = {
             '0022': ['pancreas', 'tumour'],
             '0023': ['spleen'],
             '0024': ['left lung', 'right lung', 'trachea'],
-        }
+            '0025': ['aorta', 'gall bladder', 'left kidney', 'right kidney', 'liver', 'pancreas', 'postcava', 'spleen',
+                     'stomach'],
+}

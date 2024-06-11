@@ -9,10 +9,10 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 from Bench.dataset.multi_dataset import VQADataset
 from Bench.eval.metrics import compute_exact_match, qa_f1_score
+# If the model is not from huggingface but local, please uncomment and import the model architecture.
 # from LaMed.src.model.language_model import *
 import evaluate
 
-accuracy = evaluate.load("accuracy")
 bleu = evaluate.load("bleu")
 bertscore = evaluate.load("bertscore")
 meteor = evaluate.load("meteor")
@@ -42,9 +42,9 @@ def parse_args(args=None):
 
     # data
     parser.add_argument('--data_root', type=str, default="./Data/data")
-    parser.add_argument('--vqa_data_test_path', type=str, default="./Data/data/M3D-VQA/M3D_VQA_test5k.csv")
+    parser.add_argument('--vqa_data_test_path', type=str, default="./Data/data/M3D-VQA/M3D_VQA_test.csv")
     parser.add_argument('--close_ended', type=bool, default=True)
-    parser.add_argument('--output_dir', type=str, default="./LaMed/output/LaMed-finetune-0000/eval_vqa/")
+    parser.add_argument('--output_dir', type=str, default="./LaMed/output/LaMed-Phi3-4B-finetune-0000/eval_vqa/")
 
     parser.add_argument('--proj_out_num', type=int, default=256)
 

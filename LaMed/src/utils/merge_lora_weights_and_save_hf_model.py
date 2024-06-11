@@ -1,17 +1,18 @@
+import os
+import torch
 from typing import Optional
 import transformers
 from transformers import AutoTokenizer
 from dataclasses import dataclass, field
-from LaMed.src.model.language_model import LamedLlamaForCausalLM
-import torch
-import os
-
+from LaMed.src.model.language_model import LamedLlamaForCausalLM, LamedPhi3ForCausalLM
 
 @dataclass
 class ModelArguments:
     version: Optional[str] = field(default="v0")
-    model_name_or_path: Optional[str] = field(default="./LaMed/pretrained_model/llama-2-7b-chat", metadata={"help": "Path to the LLM or MLLM."})
-    model_with_lora: Optional[str] = field(default="./LaMed/output/LaMed-0426-all/model_with_lora.bin")
+    model_name_or_path: Optional[str] = field(default="microsoft/Phi-3-mini-4k-instruct", metadata={"help": "Path to the LLM or MLLM. microsoft/Phi-3-mini-4k-instruct, llama-2-7b-chat"})
+    model_type: Optional[str] = field(default=None, metadata={"help": "llama2, phi3"})
+
+    model_with_lora: Optional[str] = field(default="./LaMed/output/LaMed-Phi3-4B-finetune-0000/model_with_lora.bin")
 
     freeze_backbone: bool = field(default=False)
     pretrain_mllm: Optional[str] = field(default=None)
@@ -45,21 +46,21 @@ class ModelArguments:
 @dataclass
 class TrainingArguments(transformers.TrainingArguments):
     lora_enable: bool = True
-    lora_r: int = 64 # 16
-    lora_alpha: int = 16 # 32
-    lora_dropout: float = 0.05 # 0.1
+    lora_r: int = 16
+    lora_alpha: int = 32
+    lora_dropout: float = 0.05
     lora_weight_path: str = ""
     lora_bias: str = "none"
 
     cache_dir: Optional[str] = field(default=None)
-    output_dir: str = "./LaMed/output/LaMed-finetune-0000/hf/"
+    output_dir: str = "./LaMed/output/LaMed-Phi3-4B-finetune-0000/hf/"
 
 
 def find_all_linear_names(model):
     cls = torch.nn.Linear
     lora_module_names = set()
     # Process of elimination: LoRA only targets on LLM backbone
-    ignore_keywords = ['vision_tower', 'mm_projector', 'seg_module', 'seg_projector', 'lm_head']
+    ignore_keywords = ['vision_tower', 'mm_projector', 'embed_tokens', 'lm_head', 'seg_projector', 'seg_module']
     for name, module in model.named_modules():
         if any(mm_keyword in name for mm_keyword in ignore_keywords):
             continue
@@ -101,10 +102,18 @@ def main():
     print("vocab_size: ", model_args.vocab_size)
 
     print("Model preparation")
-    model = LamedLlamaForCausalLM.from_pretrained(
-        model_args.model_name_or_path,
-        cache_dir=training_args.cache_dir
+    if 'llama' in model_args.model_type:
+        model = LamedLlamaForCausalLM.from_pretrained(
+            model_args.model_name_or_path,
+            cache_dir=training_args.cache_dir
         )
+    elif 'phi3' in model_args.model_type:
+        model = LamedPhi3ForCausalLM.from_pretrained(
+            model_args.model_name_or_path,
+            cache_dir=training_args.cache_dir
+        )
+    else:
+        raise ValueError(f"Unknown Model Type {model_args.model_type}")
 
     model.config.seg_token_id = model_args.seg_token_id
 

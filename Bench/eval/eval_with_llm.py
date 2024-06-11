@@ -1,5 +1,4 @@
 import os
-import sys
 from tqdm import tqdm
 from Qwen.examples.vllm_wrapper import vLLMWrapper
 

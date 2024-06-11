@@ -1,4 +1,5 @@
 import monai.transforms as mtf
+import torch
 from scipy import sparse
 import ast
 from monai.data import set_track_meta
@@ -15,7 +16,7 @@ transform = mtf.Compose(
         mtf.EnsureTyped(keys=["image", "label"], track_meta=False),
         mtf.CropForegroundd(keys=["image", "label"], source_key="image"),
         mtf.Resized(keys=["image", "label"], spatial_size=[32,256,256],
-                    mode=['trilinear', 'nearest']),  # trilinear
+                    mode=['bilinear', 'nearest']),  # trilinear
     ]
 )
 
@@ -78,6 +79,14 @@ def process_data(dir):
                     "image": target_image_path,
                     "label": os.path.join(target_mask_folder, "mask_" + str(i) + ".npy")
                 })
+            else:
+                # save negative samples
+                mask_empty = np.zeros((1,1,1,1), dtype=np.int8)
+                np.save(os.path.join(target_mask_folder, "mask_" + str(i) + ".npy"), mask_empty)
+                new_train_list.append({
+                    "image": target_image_path,
+                    "label": os.path.join(target_mask_folder, "mask_" + str(i) + ".npy")
+                })
 
 
     new_test_list = []
@@ -121,6 +130,13 @@ def process_data(dir):
         for i in range(mask.shape[0]):
             if mask[i:i + 1].sum() != 0:
                 np.save(os.path.join(target_mask_folder, "mask_" + str(i) + ".npy"), mask[i:i + 1])
+                new_test_list.append({
+                    "image": target_image_path,
+                    "label": os.path.join(target_mask_folder, "mask_" + str(i) + ".npy")
+                })
+            else:
+                mask_empty = np.zeros((1,1,1,1), dtype=np.int)
+                np.save(os.path.join(target_mask_folder, "mask_" + str(i) + ".npy"), mask_empty)
                 new_test_list.append({
                     "image": target_image_path,
                     "label": os.path.join(target_mask_folder, "mask_" + str(i) + ".npy")

@@ -8,6 +8,7 @@ import argparse
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 from Bench.dataset.multi_dataset import CapDataset
+# If the model is not from huggingface but local, please uncomment and import the model architecture.
 # from LaMed.src.model.language_model import *
 import evaluate
 

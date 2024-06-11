@@ -5,6 +5,7 @@
 accelerate launch LaMed/src/train/train.py \
     --version v0 \
     --model_name_or_path ./LaMed/pretrained_model/llama-2-7b-chat \
+    --model_type llama2 \
     --vision_tower vit3d \
     --pretrain_vision_model ./LaMed/pretrained_model/M3D-CLIP/pretrained_ViT.bin \
     --tune_mm_mlp_adapter True \

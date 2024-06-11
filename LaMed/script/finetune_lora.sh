@@ -5,6 +5,7 @@
 accelerate launch LaMed/src/train/train.py \
     --version v0 \
     --model_name_or_path ./LaMed/pretrained_model/llama-2-7b-chat \
+    --model_type llama2 \
     --lora_enable True \
     --vision_tower vit3d \
     --pretrain_vision_model ./LaMed/pretrained_model/M3D-CLIP/pretrained_ViT.bin \
@@ -14,7 +15,7 @@ accelerate launch LaMed/src/train/train.py \
     --bf16 True \
     --output_dir ./LaMed/output/LaMed-finetune-0000 \
     --num_train_epochs 4 \
-    --per_device_train_batch_size 10 \
+    --per_device_train_batch_size 8 \
     --per_device_eval_batch_size 4 \
     --gradient_accumulation_steps 1 \
     --evaluation_strategy "steps" \
@@ -23,7 +24,7 @@ accelerate launch LaMed/src/train/train.py \
     --save_strategy "steps" \
     --save_steps 2000 \
     --save_total_limit 1 \
-    --learning_rate 4e-5 \
+    --learning_rate 5e-5 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \

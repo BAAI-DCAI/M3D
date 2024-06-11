@@ -27,5 +27,5 @@ accelerate launch LaMed/src/train/train_CLIP.py \
     --logging_steps 0.001 \
     --gradient_checkpointing False \
     --dataloader_pin_memory True\
-    --dataloader_num_workers 8 \
+    --dataloader_num_workers 16 \
     --report_to tensorboard

@@ -6,8 +6,8 @@ import torch
 import transformers
 from transformers import AutoTokenizer, LlamaForCausalLM
 from dataclasses import dataclass, field
-from LaMed.src.dataset.multi_dataset import UniDatasets, CapDataset, TextDatasets
-from LaMed.src.model.language_model import LamedLlamaForCausalLM
+from LaMed.src.dataset.multi_dataset import UniDatasets, CapDataset, TextDatasets, VQADataset
+from LaMed.src.model.language_model import LamedLlamaForCausalLM, LamedPhi3ForCausalLM
 from LaMed.src.train.lamed_trainer import LaMedTrainer
 
 
@@ -20,7 +20,8 @@ def rank0_print(*args):
 @dataclass
 class ModelArguments:
     version: Optional[str] = field(default="v0")
-    model_name_or_path: Optional[str] = field(default="./LaMed/pretrained_model/llama-2-7b-chat", metadata={"help": "Path to the LLM or MLLM."})
+    model_name_or_path: Optional[str] = field(default="microsoft/Phi-3-mini-4k-instruct", metadata={"help": "Path to the LLM or MLLM."})
+    model_type: Optional[str] = field(default=None, metadata={"help": "llama2, phi3"})
 
     freeze_backbone: bool = field(default=False)
     pretrain_mllm: Optional[str] = field(default=None)
@@ -41,14 +42,14 @@ class ModelArguments:
     freeze_vision_tower: bool = field(default=False)
 
     # projector
-    mm_projector_type: Optional[str] = field(default='spp')
+    mm_projector_type: Optional[str] = field(default='spp', metadata={"help": "spp"})
     proj_layer_type: str = field(default="mlp", metadata={"help": "Type of layer in projector. options: [linear, mlp]."})
     proj_layer_num: int = field(default=2, metadata={"help": "Number of layers in projector."})
     proj_pooling_type: str = field(default="spatial", metadata={"help": "Type of pooling in projector. options: [spatial, sequence]."})
     proj_pooling_size: int = field(default=2, metadata={"help": "Size of pooling in projector."})
 
     # segvol
-    segmentation_module: str = field(default="segvol", metadata={"help": "segvol"})
+    segmentation_module: str = field(default=None, metadata={"help": "segvol"})
     pretrain_seg_module: str = field(default=None, metadata={"help": "Pretrained segvol model."})
 
 
@@ -65,9 +66,10 @@ class DataArguments:
     vqa_data_val_path: str = field(default="./Data/data/M3D-VQA/M3D_VQA_val.csv", metadata={"help": "Path to validation VQA data."})
     vqa_data_test_path: str = field(default="./Data/data/M3D-VQA/M3D_VQA_test.csv", metadata={"help": "Path to testing VQA data."})
 
+    vqa_yn_data_train_path: str = field(default="./Data/data/M3D-VQA/M3D_VQA_yn_train.csv", metadata={"help": "Path to training VQA Yes or No data."})
+
     # positioning & segmentation data
     seg_data_path: str = field(default="./Data/data/M3D_Seg_npy/", metadata={"help": "Path to segmentation data."})
-    term_dict_path: str = field(default="./Data/data/M3D_Seg_npy/term_dictionary.json", metadata={"help": "Path to term dictionary data."})
     refseg_data_train_path: str = field(default="./Data/data/M3D_RefSeg_npy/M3D_RefSeg.csv", metadata={"help": "Path to refering segmentation data."})
     refseg_data_test_path: str = field(default="./Data/data/M3D_RefSeg_npy/M3D_RefSeg_test.csv", metadata={"help": "Path to refering segmentation data."})
 
@@ -76,16 +78,16 @@ class DataArguments:
 class TrainingArguments(transformers.TrainingArguments):
     # lora
     lora_enable: bool = False
-    lora_r: int = 64  #16
-    lora_alpha: int = 16  # 32
-    lora_dropout: float = 0.05 #0.1
+    lora_r: int = 16
+    lora_alpha: int = 32
+    lora_dropout: float = 0.05
     lora_weight_path: str = ""
     lora_bias: str = "none"
 
     cache_dir: Optional[str] = field(default=None)
     remove_unused_columns: bool = field(default=False)
     model_max_length: int = field(
-        default=512,
+        default=512, #512
         metadata={
             "help":
             "Maximum sequence length. Sequences will be right padded (and possibly truncated)."
@@ -98,7 +100,7 @@ class TrainingArguments(transformers.TrainingArguments):
     # This is set up to facilitate debugging, pls config these in bash file in training.
     bf16: bool = True
     output_dir: str = "./LaMed/output/LaMed-pretrain-test"
-    num_train_epochs: int = 1
+    num_train_epochs: float = 1
     per_device_train_batch_size: int = 1
     per_device_eval_batch_size: int = 1
     gradient_accumulation_steps: int = 1
@@ -201,15 +203,13 @@ def find_all_linear_names(model):
     cls = torch.nn.Linear
     lora_module_names = set()
     # Process of elimination: LoRA only targets on LLM backbone
-    ignore_keywords = ['vision_tower', 'mm_projector', 'seg_module', 'seg_projector', 'lm_head']
+    ignore_keywords = ['vision_tower', 'mm_projector', 'embed_tokens', 'lm_head', 'seg_projector', 'seg_module']
     for name, module in model.named_modules():
         if any(mm_keyword in name for mm_keyword in ignore_keywords):
             continue
         if isinstance(module, cls):
             lora_module_names.add(name)
     return list(lora_module_names)
-
-
 
 @dataclass
 class DataCollator:
@@ -224,7 +224,13 @@ class DataCollator:
             input_ids = torch.cat([_.unsqueeze(0) for _ in input_ids], dim=0)
             labels = torch.cat([_.unsqueeze(0) for _ in labels], dim=0)
             attention_mask = torch.cat([_.unsqueeze(0) for _ in attention_mask], dim=0)
-            segs = torch.cat([_.unsqueeze(0) for _ in segs], dim=0)
+
+            for i, seg in enumerate(segs):
+                if seg.sum() == 0:
+                    segs[i] = torch.zeros((1, 1, 32, 256, 256))
+                else:
+                    segs[i] = seg.unsqueeze(0)
+            segs = torch.cat(segs, dim=0)
 
             return_dict = dict(
                 images=images,
@@ -288,10 +294,18 @@ def main():
 
     rank0_print("="*20 + " Model preparation " + "="*20)
     if model_args.vision_tower is not None:
-        model = LamedLlamaForCausalLM.from_pretrained(
-            model_args.model_name_or_path,
-            cache_dir=training_args.cache_dir
+        if 'llama' in model_args.model_type:
+            model = LamedLlamaForCausalLM.from_pretrained(
+                model_args.model_name_or_path,
+                cache_dir=training_args.cache_dir
             )
+        elif 'phi3' in model_args.model_type:
+            model = LamedPhi3ForCausalLM.from_pretrained(
+                model_args.model_name_or_path,
+                cache_dir=training_args.cache_dir
+                )
+        else:
+            raise ValueError(f"Unknown Model Type {model_args.model_type}")
     else:
         model = LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
@@ -325,7 +339,7 @@ def main():
 
     if model_args.pretrain_mllm:
         ckpt = torch.load(model_args.pretrain_mllm, map_location="cpu")
-        model.load_state_dict(ckpt, strict=False)
+        model.load_state_dict(ckpt, strict=True)
         rank0_print("load pretrained MLLM weights.")
 
     if training_args.lora_enable:
@@ -340,12 +354,23 @@ def main():
         )
         rank0_print("Adding LoRA adapters only on LLM.")
         model = get_peft_model(model, lora_config)
+
+        for n, p in model.named_parameters():
+            if any(
+                    [x in n for x in ['vision_tower', 'mm_projector', 'embed_tokens', 'lm_head', 'seg_projector', 'seg_module']]
+            ):
+                p.requires_grad = True
+
         model.print_trainable_parameters()
+
+    # ckpt = torch.load("PATH", map_location="cpu")
+    # model.load_state_dict(ckpt, strict=True)
 
     rank0_print("="*20 + " Dataset preparation " + "="*20)
     data_args.max_length = training_args.model_max_length
     data_args.proj_out_num = model.get_model().mm_projector.proj_out_num
-    data_args.seg_enable = hasattr(model.get_model(), "segmentation_module")
+    rank0_print("vision tokens output from projector: ", data_args.proj_out_num)
+    data_args.seg_enable = hasattr(model.get_model(), "seg_module")
 
     if model_args.tune_mm_mlp_adapter:
         train_dataset = TextDatasets(data_args, tokenizer, mode='train')

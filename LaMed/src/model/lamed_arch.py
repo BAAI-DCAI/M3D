@@ -80,7 +80,7 @@ class LamedMetaModel:
         self.config.segmentation_module = model_args.segmentation_module
 
         # segmentation_module
-        if getattr(self, 'segmentation_module', None) is None:
+        if getattr(self, 'seg_module', None) is None:
             self.seg_module = build_segmentation_module(self.config)
             self.seg_projector = nn.Sequential(
                 nn.Linear(self.config.hidden_size, self.config.hidden_size),

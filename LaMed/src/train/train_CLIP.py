@@ -128,7 +128,8 @@ def main():
     model = M3DCLIP(config)
 
     if model_args.pretrained_model:
-        ckpt = torch.load(model_args.pretrained_model)
+        # ckpt = torch.load(model_args.pretrained_model)
+        ckpt = load_file(model_args.pretrained_model)
         model.load_state_dict(ckpt, strict=True)
         print("load pretrained model.")
 

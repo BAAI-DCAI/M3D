@@ -9,6 +9,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 from Bench.dataset.multi_dataset import SegDataset
 from Bench.eval.metrics import BinaryDice
+# If the model is not from huggingface but local, please uncomment and import the model architecture.
 # from LaMed.src.model.language_model import *
 import SimpleITK as sitk
 import evaluate
@@ -46,8 +47,8 @@ def parse_args(args=None):
 
     parser.add_argument('--output_dir', type=str, default="./LaMed/output/LaMed-finetune-0000/eval_seg/")
     parser.add_argument('--res', type=bool, default=False, help="RES (Referring Expression Segmentation) or SS (Segmantic Segmentation)")
-    parser.add_argument('--dataset_id', type=str, default='0003', help="Which test dataset", choices=['0003', '0011', '0012'])
-    parser.add_argument('--vis', type=bool, default=True)
+    parser.add_argument('--dataset_id', type=str, default='0011', help="Which test dataset", choices=['0003', '0011', '0012'])
+    parser.add_argument('--vis', type=bool, default=False)
 
     parser.add_argument('--seg_enable', type=bool, default=True)
     parser.add_argument('--proj_out_num', type=int, default=256)
@@ -118,9 +119,9 @@ def main():
             pred = (torch.sigmoid(logits) > 0.5) * 1.0
             dice = metric_fn(logits, seg).item()
 
-            print("Answer: ", answer[0])
-            print("Prediction: ", generated_texts[0])
-            print("Dice: ", dice)
+            # print("Answer: ", answer[0])
+            # print("Prediction: ", generated_texts[0])
+            # print("Dice: ", dice)
 
             writer.writerow([id, question_type[0], tag[0], question[0], answer[0], generated_texts[0], dice])
 

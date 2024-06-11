@@ -9,8 +9,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
 from Bench.dataset.multi_dataset import PosRECTestDataset, PosREGTestDataset
 from Bench.utils import extract_box_from_text, calculate_iou
+# If the model is not from huggingface but local, please uncomment and import the model architecture.
 # from LaMed.src.model.language_model import *
-
 import matplotlib.pyplot as plt
 import SimpleITK as sitk
 import evaluate

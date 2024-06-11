@@ -27,7 +27,7 @@ def parse_args(args=None):
 
     # data
     parser.add_argument('--data_root', type=str, default="./Data/data/")
-    parser.add_argument('--cap_data_path', type=str, default="./Data/data/M3D_Cap_npy/M3D_Cap.json")
+    parser.add_argument('--cap_data_path', type=str, default="./Data/data/M3D_Cap_npy/M3D_Cap_eh.json")
     parser.add_argument('--output_dir', type=str, default="./LaMed/output/CLIP/eval_itr/")
     parser.add_argument('--save_output', type=bool, default=False)
 
@@ -60,7 +60,7 @@ def main():
     )
     model = model.to(device=device)
 
-    test_dataset = ITRDataset(args, tokenizer=tokenizer, mode='test') # test, test1k, test500, test100
+    test_dataset = ITRDataset(args, tokenizer=tokenizer, mode='hard_test') # test, test1k, test500, test100
 
     test_dataloader = DataLoader(
             test_dataset,
