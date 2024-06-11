@@ -6,6 +6,11 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 - **M3D-LaMed**: the versatile multi-modal models with M3D-CLIP pretrained vision encoder, which are capable of tasks such as image-text retrieval, report generation, visual question answering, positioning and segmentation;
 - **M3D-Bench**: the most comprehensive automatic evaluation benchmark covers 8 tasks.
 
+## Notifications
+📢 [2024.06.12] 
+- We modified some code and are preparing to release the light LaMed model based on Phi3-4B, so stay tuned. 
+- We found that the previously GoodBaiBai88/M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
+- 
 
 ## News
 - [x] [2024.04.28] We have released the data, code and model.
