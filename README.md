@@ -191,8 +191,9 @@ Merge the LoRA weights of `model_with_lora.bin`, save the final model into your 
 ```bash
 CUDA_VISIBLE_DEVICES="" python merge_lora_weights_and_save_hf_model.py \
   --version="" \
-  --weight="PATH_TO_model_with_lora.bin" \
-  --save_path="PATH_TO_SAVED_MODEL"
+  --model_type="" \
+  --model_with_lora="PATH_TO_model_with_lora.bin" \
+  --output_dir="PATH_TO_SAVED_MODEL"
 ```
 
 ## Benchmark
