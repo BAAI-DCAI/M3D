@@ -9,7 +9,7 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 ## Notifications
 📢 [2024.06.12] 
 - We modified some code and are preparing to release the light LaMed model based on Phi3-4B, so stay tuned. 
-- We found that the previously GoodBaiBai88/M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
+- We found that the previous GoodBaiBai88/M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
 
 ## News
 - [x] [2024.04.28] We have released the data, code and model.
