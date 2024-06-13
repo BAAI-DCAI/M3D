@@ -122,7 +122,7 @@ def main():
         with open(output_path, mode='w') as outfile:
             writer = csv.writer(outfile)
             writer.writerow(["Question Type", "Question", "Answer", "Pred", "bleu", "rouge1", "meteor", "bert_f1"])
-            for sample in tqdm.tqdm(test_dataloader):
+            for sample in tqdm(test_dataloader):
                 question = sample["question"]
                 question_type = sample["question_type"].item()
                 answer = sample['answer']
