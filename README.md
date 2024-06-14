@@ -8,6 +8,7 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 
 ## Notifications
 📢 [2024.06.12]
+- 🔥🔥🔥 We released an [online demo](https://e7e9a4f07f93722d27.gradio.live/), and everyone is welcome to try it!
 - We released a light but strong model, M3D-LaMed-Phi-3-4B. After simple testing, it outperformed M3D-LaMed-Llama-2-7B. We are conducting detailed experiments. Please try it first.
 - We found that the previous M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
 
