@@ -7,12 +7,13 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 - **M3D-Bench**: the most comprehensive automatic evaluation benchmark covers 8 tasks.
 
 ## Notifications
-📢 [2024.06.12] 
-- We modified some code and are preparing to release the light LaMed model based on Phi3-4B, so stay tuned. 
-- We found that the previous GoodBaiBai88/M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
+📢 [2024.06.12]
+- We released a light but strong model, M3D-LaMed-Phi-3-4B. After simple testing, it outperformed M3D-LaMed-Llama-2-7B. We are conducting detailed experiments. Please try it first.
+- We found that the previous M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
 
 ## News
-- [x] [2024.04.28] We have released the data, code and model.
+- [x] [2024.06.14] We released a light but strong model, M3D-LaMed-Phi-3-4B.
+- [x] [2024.04.28] We released the data, code, and model.
 
 
 ## Quickstart
@@ -28,7 +29,7 @@ import SimpleITK as sikt
 device = torch.device('cuda') # 'cpu', 'cuda'
 dtype = torch.bfloat16 # or bfloat16, float16, float32
 
-model_name_or_path = 'GoodBaiBai88/M3D-LaMed-Llama-2-7B'
+model_name_or_path = 'GoodBaiBai88/M3D-LaMed-Phi-3-4B'
 proj_out_num = 256
 
 # Prepare your 3D medical image:
@@ -83,6 +84,7 @@ ssv.display(seg)
 | Model    | Download Link                                                                                                                                 |
 |----------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | M3D-CLIP | [HuggingFace](https://huggingface.co/GoodBaiBai88/M3D-CLIP), [ModelScope]()    |
+| M3D-LaMed-Phi-3-4B  | [HuggingFace](https://huggingface.co/GoodBaiBai88/M3D-LaMed-Phi-3-4B), [ModelScope]()|
 | M3D-LaMed-Llama-2-7B  | [HuggingFace](https://huggingface.co/GoodBaiBai88/M3D-LaMed-Llama-2-7B), [ModelScope]()|
 
 
