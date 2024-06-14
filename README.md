@@ -1,6 +1,6 @@
 # M3D: Advancing 3D Medical Image Analysis with Multi-Modal Large Language Models
 
-<font size=3><div align='center' > <a href=https://arxiv.org/abs/2404.00578>**Paper**</a> | [**Data**](#data) | [**Model**](#model) | [**Training**](#training) | [**Benchmark**](#benchmark) | [**Online Demo**]()</div></font>
+<font size=3><div align='center' > <a href=https://arxiv.org/abs/2404.00578>**Paper**</a> | [**Data**](#data) | [**Model**](#model) | [**Training**](#training) | [**Benchmark**](#benchmark) | [**Online Demo**](https://badefae74cd0362d20.gradio.live/)</div></font>
 M3D is the pioneering and comprehensive series of work on the  multi-modal large language model for 3D medical analysis, including:
 - **M3D-Data**: the largest-scale open-source 3D medical dataset, consists of 120K image-text pairs and 662K instruction-response pairs;
 - **M3D-LaMed**: the versatile multi-modal models with M3D-CLIP pretrained vision encoder, which are capable of tasks such as image-text retrieval, report generation, visual question answering, positioning and segmentation;
@@ -12,7 +12,7 @@ M3D is the pioneering and comprehensive series of work on the  multi-modal large
 - We found that the previous M3D-LaMed-Llama-2-7B model had problems in the segmentation task. We have fixed this problem and will re-release the new model in the next few days.
 
 ## News
-- [x] [2024.06.14] We released a light but strong model, M3D-LaMed-Phi-3-4B.
+- [x] [2024.06.14] We released a light but strong model [M3D-LaMed-Phi-3-4B](https://huggingface.co/GoodBaiBai88/M3D-LaMed-Phi-3-4B) and an [online demo](https://badefae74cd0362d20.gradio.live/).
 - [x] [2024.04.28] We released the data, code, and model.
 
 
