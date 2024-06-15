@@ -121,6 +121,7 @@ sh LaMed/script/train_clip.sh
 ```
 
 #### LLM
+Phi-3-4B: Download and follow [here](https://huggingface.co/microsoft/Phi-3-mini-128k-instruct).
 Llama-2-7B: Download and follow [here](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf).
 
 #### Segmentation module
