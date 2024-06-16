@@ -38,7 +38,7 @@ proj_out_num = 256
 # 2. The image needs to be normalized to 0-1, consider Min-Max Normalization.
 # 3. The image format needs to be converted to .npy 
 # 4. Although we did not train on 2D images, in theory, the 2D image can be interpolated to the shape of 1*32*256*256 for input.
-image_path = "./Data/data/examples/example_01.npy"
+image_path = "./Data/data/examples/example_00.npy"
 
 model = AutoModelForCausalLM.from_pretrained(
     model_name_or_path,
