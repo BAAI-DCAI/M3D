@@ -176,7 +176,7 @@ Please update LLM path `--model_name_or_path` and vision encoder path `--pretrai
 Update `--output_dir` to specify the output path of the model.
 Then run the script by:
 ```bash
-sh LaMed/script/pretrain_llama2.sh
+sh LaMed/script/pretrain_phi3.sh
 ```
 
 #### Step 2: Visual Instruction Tuning
@@ -187,7 +187,7 @@ Please update LLM path `--model_name_or_path`, vision encoder path `--pretrain_v
 Update `--output_dir` to specify the output path of the model.
 Then run the script by:
 ```bash
-sh LaMed/script/finetune_lora_llama2.sh
+sh LaMed/script/finetune_lora_phi3.sh
 ```
 
 ### Merge LoRA Weight
