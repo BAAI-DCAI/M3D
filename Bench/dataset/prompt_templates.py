@@ -41,7 +41,7 @@ Caption_templates = [
             "Describe this scan's findings.",
             "Generate a medical report based on this image.",
             "Can you provide a diagnosis based on this image?",
-        ]
+]
 
 
 PosREC_templates = {
@@ -171,9 +171,9 @@ PosREC_templates = {
 ],
 
 "cls_no_answers": [
-    "Sorry, there is no {}",
-    "No, we can not see {}",
-    "{} is not here",
+    "Sorry, there is no {}.",
+    "No, we can not see {}.",
+    "{} is not here.",
     "Sorry, there's no {} in sight.",
     "Unfortunately, {} is not visible here.",
     "No, {} is not present in this image.",
@@ -291,29 +291,29 @@ PosREG_templates = {
 
 "des_answers": [
             "Sure, it is {}. {}",
-            "The category is {}. {}.",
-            "It is {}, {}.",
+            "The category is {}. {}",
+            "It is {}, {}",
             "{}, {}",
-            "The target is identified as {} and its description is {}.",
-            "The category is {}. Description: {}.",
-            "It is characterized by {}, {}.",
-            "The identified attributes are {}, {}.",
-            "Sure, it is {}. Describing it as {}."
+            "The target is identified as {} and its description is {}",
+            "The category is {}. Description: {}",
+            "It is characterized by {}, {}",
+            "The identified attributes are {}, {}",
+            "Sure, it is {}. Describing it as {}",
             "Certainly, it is {}. {}",
-            "The category is identified as {}. {}.",
-            "It's labeled as {}, {}.",
+            "The category is identified as {}. {}",
+            "It's labeled as {}, {}",
             "Identified as {}, {}",
-            "The target is recognized as {} with the following description: {}.",
-            "The category is {}. Here's the description: {}.",
-            "Characterized by {}, {}.",
-            "Identified attributes: {}, {}.",
-            "Sure, it's {}. Described as {}."
+            "The target is recognized as {} with the following description: {}",
+            "The category is {}. Here's the description: {}",
+            "Characterized by {}, {}",
+            "Identified attributes: {}, {}",
+            "Sure, it's {}. Described as {}",
         ],
 
 "cls_no_answers": [
-    "Sorry, there is no {}",
-    "No, we can not see {}",
-    "{} is not here",
+    "Sorry, there is no {}.",
+    "No, we can not see {}.",
+    "{} is not here.",
     "Sorry, we couldn't find any {}.",
     "Nope, {} isn't visible here.",
     "{} seems to be absent.",
@@ -327,8 +327,8 @@ PosREG_templates = {
     "This is {}, however we can not see it.",
     "This is {}, but it's not present here.",
     "This is {}, however, it's not visible in this context.",
-    "The answer is {}, but it is not here."
-    "The object is {}, but it is absent in the image."
+    "The answer is {}, but it is not here.",
+    "The object is {}, but it is absent in the image.",
 ]
 }
 
@@ -364,8 +364,8 @@ Seg_templates = {
         ],
 
 "des_questions": [
-            "{} Please answer and segment."
-            "{} Please output segmentation mask and answer."
+            "{} Please answer and segment.",
+            "{} Please output segmentation mask and answer.",
             "{} Please answer and segment based on the above description.",
             "{} Please answer and segment based on the above definition.",
             "{} Can you answer and segment it based on the above description or definition.",
@@ -399,7 +399,7 @@ Seg_templates = {
             "The segmentation suggests [SEG].",
             "From the segmentation, it appears to be [SEG].",
             "The target is [SEG].",
-            "The segmentation mask is [SEG]."
+            "The segmentation mask is [SEG].",
             "The mask is [SEG].",
 ],
 
@@ -419,9 +419,9 @@ Seg_templates = {
         ],
 
 "cls_no_answers": [
-            "Sorry, there is no {}",
-            "No, we cannot see {}",
-            "{} is not present",
+            "Sorry, there is no {}.",
+            "No, we cannot see {}.",
+            "{} is not present.",
             "There's no sign of {} in this image.",
             "Unfortunately, {} is not visible in this image.",
             "We cannot detect {} in this image.",

@@ -49,9 +49,9 @@ class ITRDataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.transform = val_transform
         elif 'test' in mode:
             self.transform = val_transform
@@ -163,11 +163,11 @@ class CapDataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.transform = val_transform
-        elif mode == 'test':
+        elif 'test' in mode:
             self.transform = val_transform
 
     def __len__(self):
@@ -276,9 +276,9 @@ class VQADataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.transform = val_transform
         elif 'test' in mode:
             self.transform = val_transform
@@ -409,11 +409,11 @@ class PosRECDataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.transform = val_transform
-        elif mode == 'test':
+        elif 'test' in mode:
             self.transform = val_transform
 
         self.cls_questions = PosREC_templates["cls_questions"]
@@ -432,7 +432,7 @@ class PosRECDataset(Dataset):
             data = self.data_list[idx]
 
             image_path = data['image']
-            seg_path = data['mask']
+            seg_path = data['label']
 
             image_array = np.load(image_path) #1*32*256*256, normalized
             seg_array = np.load(seg_path)
@@ -580,11 +580,11 @@ class PosREGDataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.transform = val_transform
-        elif mode == 'test':
+        elif 'test' in mode:
             self.transform = val_transform
 
         self.cls_questions = PosREG_templates["cls_questions"]
@@ -607,7 +607,7 @@ class PosREGDataset(Dataset):
             data = self.data_list[idx]
 
             image_path = data['image']
-            seg_path = data['mask']
+            seg_path = data['label']
 
             image_array = np.load(image_path) #1*32*256*256, normalized
             seg_array = np.load(seg_path)
@@ -753,11 +753,11 @@ class SegDataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.transform = val_transform
-        elif mode == 'test':
+        elif 'test' in mode:
             self.transform = val_transform
 
         self.cls_questions = Seg_templates["cls_questions"]
@@ -894,13 +894,13 @@ class RefSegDataset(Dataset):
             )
         set_track_meta(False)
 
-        if mode == 'train':
+        if 'train' in mode:
             self.data_list = pd.read_csv(args.refseg_data_train_path, engine='python')
             self.transform = train_transform
-        elif mode == 'validation':
+        elif 'validation' in mode:
             self.data_list = pd.read_csv(args.refseg_data_test_path, engine='python')
             self.transform = val_transform
-        elif mode == 'test':
+        elif 'test' in mode:
             self.data_list = pd.read_csv(args.refseg_data_test_path, engine='python')
             self.transform = val_transform
 

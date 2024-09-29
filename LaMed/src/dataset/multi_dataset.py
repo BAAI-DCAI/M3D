@@ -1107,10 +1107,10 @@ class MultiSegDataset(Dataset):
         self.dataset_info = dataset_info
 
         self.ds_list = []
+        # self.ds_list.append(RefSegDataset(args, tokenizer, mode=mode))
         for dataset_code in self.dataset_info.keys():
             self.ds_list.append(SegDataset(args, tokenizer, tag=dataset_code, description=False, mode=mode))
             self.ds_list.append(SegDataset(args, tokenizer, tag=dataset_code, description=True, mode=mode))
-        self.ds_list.append(RefSegDataset(args, tokenizer, mode=mode))
         self.dataset = ConcatDataset(self.ds_list)
 
     def __len__(self):
@@ -1183,9 +1183,10 @@ class UniDatasets(Dataset):
             CapDataset(args, tokenizer, mode),
             VQADataset(args, tokenizer, close_ended=True, mode=mode),
             VQADataset(args, tokenizer, close_ended=False, mode=mode),
-            # VQAYNDataset(args, tokenizer, mode=mode),
+            VQAYNDataset(args, tokenizer, mode=mode),
             MultiPosDataset(args, tokenizer, mode),
-            MultiSegDataset(args, tokenizer, mode),
+            # MultiSegDataset(args, tokenizer, mode),
+            # MultiSegDataset(args, tokenizer, mode),
         ]
         self.dataset = ConcatDataset(self.ds_list)
 
