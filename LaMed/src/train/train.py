@@ -93,7 +93,9 @@ class TrainingArguments(transformers.TrainingArguments):
             "Maximum sequence length. Sequences will be right padded (and possibly truncated)."
         },
     )
+    seed: int = 42
     ddp_backend: str = "nccl"
+    ddp_timeout: int = 128000
     ddp_find_unused_parameters: bool = False
     optim: str = field(default="adamw_torch")
 
@@ -284,6 +286,9 @@ def main():
 
     if tokenizer.unk_token is not None and tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.unk_token
+    if 'llama3' in model_args.model_type:
+        tokenizer.eos_token_id = 128001
+        tokenizer.pad_token = tokenizer.eos_token
 
     # Convert special tokens to token IDs and set related arguments
     model_args.img_token_id = tokenizer.convert_tokens_to_ids("<im_patch>")
@@ -297,7 +302,9 @@ def main():
         if 'llama' in model_args.model_type:
             model = LamedLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
-                cache_dir=training_args.cache_dir
+                cache_dir=training_args.cache_dir,
+                bos_token_id=tokenizer.bos_token_id,
+                eos_token_id=tokenizer.eos_token_id,
             )
         elif 'phi3' in model_args.model_type:
             model = LamedPhi3ForCausalLM.from_pretrained(
@@ -363,7 +370,7 @@ def main():
 
         model.print_trainable_parameters()
 
-    # ckpt = torch.load("PATH", map_location="cpu")
+    # ckpt = torch.load("PATH/model_with_lora.bin", map_location="cpu")
     # model.load_state_dict(ckpt, strict=True)
 
     rank0_print("="*20 + " Dataset preparation " + "="*20)
