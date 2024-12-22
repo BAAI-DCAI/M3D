@@ -1,6 +1,6 @@
 # M3D: Advancing 3D Medical Image Analysis with Multi-Modal Large Language Models
 
-[demo]:https://08778b8abe6ef5b6dd.gradio.live/
+[demo]:https://github.com/BAAI-DCAI/M3D/blob/main/LaMed/src/demo/online_demo.py
 
 <font size=3><div align='center' > <a href=https://arxiv.org/abs/2404.00578>**Paper**</a> | [**Data**](#data) | [**Model**](#model) | [**Training**](#training) | [**Benchmark**](#benchmark) | [**Online Demo**][demo]</div></font>
 M3D is the pioneering and comprehensive series of work on the  multi-modal large language model for 3D medical analysis, including:
