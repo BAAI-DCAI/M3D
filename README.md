@@ -219,6 +219,8 @@ after modifying the `file_path`, please run:
 CUDA_VISIBLE_DEVICES="" python Bench/eval/eval_with_llm.py
 ```
 
+## Dataset Copyright Information
+All images and reports involved in this dataset are publicly available data. The M3D-Data have obtained an official license approval from Radiopaedia. We support the non-commercial use of Radiopaedia content for machine learning.
 
 ## Citation
 If our dataset or project are helpful to you, please consider citing:
